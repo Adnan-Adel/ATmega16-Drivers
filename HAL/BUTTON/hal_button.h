@@ -24,19 +24,21 @@
 
 /* ----------------------- Software Interfaces Declarations ----------------------- */
 /**
- * @brief Initialize Led Pin as Input
- * @param _led_port Port index for led
- * @param _led_pin  pin number for led
+ * @brief Initialize button pin as Input
+ * @param _btn_port Port index for btn
+ * @param _btn_pin  pin number for btn
  * @return none
  */
 void button_init(gpio_port_index_t _btn_port, gpio_pin_index_t _btn_pin);
 
 /**
- * @brief Turn on Led(output High on led pin)
- * @param _led_port Port index for led
- * @param _led_pin  pin number for led
+ * @brief get state of button (pressed or not)
+ * @param _btn_port Port index for led
+ * @param _btn_pin  pin number for led
+ * @param _btn_active_state State of button(Active High or Active Low).
+ * @param _btn_state State of button(Pressed or not)
  * @return none
  */
-void button_read_state(gpio_port_index_t _btn_port, gpio_pin_index_t _btn_pin, uint8_t* _btn_state, uint8_t _btn_active_state);
+void button_read_state(gpio_port_index_t _btn_port, gpio_pin_index_t _btn_pin, uint8_t _btn_active_state, uint8_t* _btn_state);
 
 #endif /* HAL_BUTTON_HAL_BUTTON_H_ */

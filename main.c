@@ -18,8 +18,8 @@ int main()
 
 	while(1)
 	{
-		button_read_state(PORTC_INDEX, PIN5, &btn1_val, BUTTON_STATE_ACTIVE_HIGH);
-		button_read_state(PORTC_INDEX, PIN6, &btn2_val, BUTTON_STATE_ACTIVE_LOW);
+		button_read_state(PORTC_INDEX, PIN5, BUTTON_STATE_ACTIVE_HIGH, &btn1_val);
+		button_read_state(PORTC_INDEX, PIN6, BUTTON_STATE_ACTIVE_LOW, &btn2_val);
 
 		if(btn1_val ==BUTTON_PRESSED)
 		{
