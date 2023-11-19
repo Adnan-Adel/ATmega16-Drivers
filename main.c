@@ -6,30 +6,42 @@
  */
 #include "HAL/LED/hal_led.h"
 #include "HAL/BUTTON/hal_button.h"
+#include "MCAL/INTERRUPT/mcal_ext_interrupt.h"
 
+void INT0_DefaultHandler(void);
+void INT1_DefaultHandler(void);
+void INT2_DefaultHandler(void);
 
 int main()
 {
-	uint8_t btn1_val= 0;
-	uint8_t btn2_val= 1;
 	led_init(PORTA_INDEX, PIN0);
+	led_init(PORTA_INDEX, PIN1);
+	led_init(PORTA_INDEX, PIN2);
 	button_init(PORTC_INDEX, PIN5);
 	button_init(PORTC_INDEX, PIN6);
+	Interrupr_INTx_Init(EXT_INT0, INTx_SENSE_LOGICAL_CHANGE, INT0_DefaultHandler);
+	Interrupr_INTx_Init(EXT_INT1, INTx_SENSE_LOGICAL_CHANGE, INT1_DefaultHandler);
+	Interrupr_INTx_Init(EXT_INT2, INTx_SENSE_RISING_EDGE, INT2_DefaultHandler);
 
 	while(1)
 	{
-		button_read_state(PORTC_INDEX, PIN5, BUTTON_STATE_ACTIVE_HIGH, &btn1_val);
-		button_read_state(PORTC_INDEX, PIN6, BUTTON_STATE_ACTIVE_LOW, &btn2_val);
 
-		if(btn1_val ==BUTTON_PRESSED)
-		{
-			led_turn_on(PORTA_INDEX, PIN0);
-		}
-		if(btn2_val ==BUTTON_PRESSED)
-		{
-			led_turn_off(PORTA_INDEX, PIN0);
-		}
 	}
 
 	return 0;
+}
+
+void INT0_DefaultHandler(void)
+{
+	led_toggle(PORTA_INDEX, PIN0);
+}
+
+void INT1_DefaultHandler(void)
+{
+	led_toggle(PORTA_INDEX, PIN1);
+}
+
+void INT2_DefaultHandler(void)
+{
+	led_toggle(PORTA_INDEX, PIN2);
 }
