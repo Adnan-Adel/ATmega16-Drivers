@@ -4,7 +4,15 @@
 #include "std_types.h"
 #include "Bit_Masking.h"
 
+// Special Function I/O Register – SFIOR
 #define SFIOR				(*(volatile uint8_t*)0x50)
+#define PSR10				0
+#define PSR2				1
+#define PUD					2		// The Pull-up disable bit in MCUCR-Reg
+#define ACME				3
+#define ADTS0				5
+#define ADTS1				6
+#define ADTS2				7
 
 /* ------------------------------------------- GPIO Registers ------------------------------------------- */
 // PORTA
@@ -64,5 +72,92 @@
 #define INTF2				5
 #define INTF0				6
 #define INTF1				7
+
+/* ------------------------------------------- USART Registers ------------------------------------------- */
+// USART I/O Data Register – UDR
+#define UDR					(*(volatile uint8_t*)0x2C)
+
+// USART Control and Status Register A – UCSRA
+#define UCSRA				(*(volatile uint8_t*)0x2B)
+#define MPCM				0
+#define U2X					1
+#define PE					2
+#define DOR					3
+#define FE					4
+#define UDRE				5
+#define TXC					6
+#define RXC					7
+
+// USART Control and Status Register B – UCSRB
+#define UCSRB				(*(volatile uint8_t*)0x2A)
+#define TXB8				0
+#define RXB8				1
+#define UCSZ2				2
+#define TXEN				3
+#define RXEN				4
+#define UDRIE				5
+#define TXCIE				6
+#define RXCIE				7
+
+// USART Control and Status Register C – UCSRC
+#define UCSRC				(*(volatile uint8_t*)0x40)
+#define UCPOL				0
+#define UCSZ0				1
+#define UCSZ1				2
+#define USBS				3
+#define UPM0				4
+#define UPM1				5
+#define UMSEL				6
+#define URSEL				7
+
+// USART Baud Rate High Register - UBRRH
+#define UBRRH				(*(volatile uint8_t*)0x40)
+
+// USART Baud Rate Low Register - UBRRL
+#define UBRRL				(*(volatile uint8_t*)0x29)
+
+/* -------------------------------------------------- TIMERS -------------------------------------------------- */
+// Timer/CounterInterrupt Mask Register – TIMSK
+#define TIMSK				(*(volatile uint8_t*)0x59)
+#define TOIE0				0
+#define OCIE0				1
+#define TOIE1				2
+#define OCIE1B				3
+#define OCIE1A				4
+#define TICIE1				5
+#define TOIE2				6
+#define OCIE2				7
+
+// Timer/CounterInterrupt Flag Register – TIFR
+#define TIFR				(*(volatile uint8_t*)0x58)
+#define TOV0				0
+#define OCF0				1
+#define TOV1				2
+#define OCF1B				3
+#define OCF1A				4
+#define ICF1				5
+#define TOV2				6
+#define OCF2				7
+
+/* ------------------------------------------- Timer0 Registers ------------------------------------------- */
+// Timer/Counter Control Register – TCCR0
+#define TCCR0				(*(volatile uint8_t*)0x53)
+#define CS00				0
+#define CS01				1
+#define CS02				2
+#define WGM01				3
+#define COM00				4
+#define COM01				5
+#define WGM00				6
+#define FOC0				7
+
+// Timer/Counter Register – TCNT0
+#define TCNT0				(*(volatile uint8_t*)0x52)
+
+// Output CompareRegister – OCR0
+#define OCR0				(*(volatile uint8_t*)0x5C)
+
+
+
 
 #endif
