@@ -9,7 +9,8 @@
 /* ----------------------------------- Includes ----------------------------------- */
 #include "mcal_usart.h"
 
-static uint8_t l_ucsrs_reg=0x00;
+uint8_t ucsrc_val=0x00;		// variable temporarily holds the UCSRC-Reg Value
+
 /* ------------------------ Helper Functions Declarations ------------------------- */
 static void USART_Mode_Select(const usart_cfg_t* _usart_obj);
 static void USART_DataBits_Select(const usart_cfg_t* _usart_obj);
@@ -43,8 +44,8 @@ void USART_Init(const usart_cfg_t* _usart_obj)
 		/* Configure Number of Stop Bits */
 		USART_StopBits_Select(_usart_obj);
 		
-		SET_BIT(l_ucsrs_reg,URSEL);
-		UCSRC = (1 << URSEL) | l_ucsrs_reg;
+		// The URSEL must be one when writing the UCSRC.
+		UCSRC = (1 << URSEL) | ucsrc_val;
 
 		/* Enable USART */
 		if(_usart_obj->_usart_operation_mode == USART_OP_MODE_TX)
@@ -91,11 +92,11 @@ static void USART_Mode_Select(const usart_cfg_t* _usart_obj)
 {
 	if(_usart_obj->_usart_mode == USART_MODE_ASYNCH)
 	{
-		CLEAR_BIT(l_ucsrs_reg,UMSEL);
+		CLEAR_BIT(ucsrc_val,UMSEL);
 	}
 	else if(_usart_obj->_usart_mode == USART_MODE_SYNCH)
 	{
-		SET_BIT(l_ucsrs_reg,UMSEL);
+		SET_BIT(ucsrc_val,UMSEL);
 	}
 }
 
@@ -104,32 +105,32 @@ static void USART_DataBits_Select(const usart_cfg_t* _usart_obj)
 	switch(_usart_obj->_usart_data_bits)
 	{
 	case USART_DATA_BITS_5:
-		CLEAR_BIT(l_ucsrs_reg,UCSZ0);
-		CLEAR_BIT(l_ucsrs_reg,UCSZ1);
+		CLEAR_BIT(ucsrc_val,UCSZ0);
+		CLEAR_BIT(ucsrc_val,UCSZ1);
 		CLEAR_BIT(UCSRB,UCSZ2);
 		break;
 
 	case USART_DATA_BITS_6:
-		SET_BIT(l_ucsrs_reg,UCSZ0);
-		CLEAR_BIT(l_ucsrs_reg,UCSZ1);
+		SET_BIT(ucsrc_val,UCSZ0);
+		CLEAR_BIT(ucsrc_val,UCSZ1);
 		CLEAR_BIT(UCSRB,UCSZ2);
 		break;
 
 	case USART_DATA_BITS_7:
-		CLEAR_BIT(l_ucsrs_reg,UCSZ0);
-		SET_BIT(l_ucsrs_reg,UCSZ1);
+		CLEAR_BIT(ucsrc_val,UCSZ0);
+		SET_BIT(ucsrc_val,UCSZ1);
 		CLEAR_BIT(UCSRB,UCSZ2);
 		break;
 
 	case USART_DATA_BITS_8:
-		SET_BIT(l_ucsrs_reg,UCSZ0);
-		SET_BIT(l_ucsrs_reg,UCSZ1);
+		SET_BIT(ucsrc_val,UCSZ0);
+		SET_BIT(ucsrc_val,UCSZ1);
 		CLEAR_BIT(UCSRB,UCSZ2);
 		break;
 
 	case USART_DATA_BITS_9:
-		SET_BIT(l_ucsrs_reg,UCSZ0);
-		SET_BIT(l_ucsrs_reg,UCSZ1);
+		SET_BIT(ucsrc_val,UCSZ0);
+		SET_BIT(ucsrc_val,UCSZ1);
 		SET_BIT(UCSRB,UCSZ2);
 		break;
 
@@ -141,18 +142,18 @@ static void USART_Parity_Select(const usart_cfg_t* _usart_obj)
 	switch(_usart_obj->_usart_parity)
 	{
 	case USART_PARITY_DISABLED:
-		CLEAR_BIT(l_ucsrs_reg,UPM0);
-		CLEAR_BIT(l_ucsrs_reg,UPM1);
+		CLEAR_BIT(ucsrc_val,UPM0);
+		CLEAR_BIT(ucsrc_val,UPM1);
 		break;
 
 	case USART_ODD_PARITY:
-		SET_BIT(l_ucsrs_reg,UPM0);
-		SET_BIT(l_ucsrs_reg,UPM1);
+		SET_BIT(ucsrc_val,UPM0);
+		SET_BIT(ucsrc_val,UPM1);
 		break;
 
 	case USART_EVEN_PARITY:
-		CLEAR_BIT(l_ucsrs_reg,UPM0);
-		SET_BIT(l_ucsrs_reg,UPM1);
+		CLEAR_BIT(ucsrc_val,UPM0);
+		SET_BIT(ucsrc_val,UPM1);
 		break;
 	}
 }
@@ -161,11 +162,11 @@ static void USART_StopBits_Select(const usart_cfg_t* _usart_obj)
 {
 	if(_usart_obj->_usart_stop_bit == USART_STOP_BITS_1)
 	{
-		CLEAR_BIT(l_ucsrs_reg,USBS);
+		CLEAR_BIT(ucsrc_val,USBS);
 	}
 	else if(_usart_obj->_usart_stop_bit == USART_STOP_BITS_2)
 	{
-		SET_BIT(l_ucsrs_reg,USBS);
+		SET_BIT(ucsrc_val,USBS);
 	}
 }
 

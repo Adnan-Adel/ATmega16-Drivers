@@ -10,10 +10,7 @@
 /* ------------------------------- Includes ------------------------------- */
 #include "../../Utilities/Registers.h"
 
-#include <util/delay.h>
 /* ------------------------------- Macros Declarations ------------------------------- */
-#define PUD		2	// The Pull-up disable bit in MCUCR-Reg
-
 #define F_CPU	8000000UL
 
 /* ------------------------------- data types declarations ------------------------------- */
