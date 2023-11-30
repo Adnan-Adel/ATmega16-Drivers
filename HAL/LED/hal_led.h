@@ -8,6 +8,38 @@
 #ifndef HAL_LED_HAL_LED_H_
 #define HAL_LED_HAL_LED_H_
 
+
+
+//******************Pedestrians Leds******************** 
+#define ped_red_port PORTA_INDEX
+#define ped_red_pin PIN0
+
+#define ped_yellow_port PORTA_INDEX
+#define ped_yellow_pin PIN1
+
+#define ped_green_port PORTA_INDEX
+#define ped_green_pin PIN2
+//****************************************************
+
+
+
+
+//******************Cars Leds********************
+#define car_red_port PORTB_INDEX
+#define car_red_pin PIN0
+
+#define car_yellow_port PORTB_INDEX
+#define car_yellow_pin PIN1
+
+#define car_green_port PORTB_INDEX
+#define car_green_pin PIN2
+//****************************************************
+
+
+
+
+
+
 /* ------------------------------- Includes ------------------------------- */
 #include "../../MCAL/GPIO/mcal_gpio.h"
 

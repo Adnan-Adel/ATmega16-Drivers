@@ -18,7 +18,6 @@
 #define BUTTON_NOT_PRESSED					0
 #define BUTTON_PRESSED						1
 
-
 /* ------------------------------- data types declarations ------------------------------- */
 
 
@@ -36,7 +35,7 @@ void button_init(gpio_port_index_t _btn_port, gpio_pin_index_t _btn_pin);
  * @param _btn_port Port index for led
  * @param _btn_pin  pin number for led
  * @param _btn_active_state State of button(Active High or Active Low).
- * @param _btn_state State of button(Pressed or not)
+ * @param _btn_state State of button
  * @return none
  */
 void button_read_state(gpio_port_index_t _btn_port, gpio_pin_index_t _btn_pin, uint8_t _btn_active_state, uint8_t* _btn_state);
