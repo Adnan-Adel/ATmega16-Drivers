@@ -11,28 +11,25 @@
 
 
 //******************Pedestrians Leds******************** 
-#define ped_red_port PORTA_INDEX
-#define ped_red_pin PIN0
+#define PED_GREEN_PORT 		PORTA_INDEX
+#define PED_GREEN_PIN 		PIN3
 
-#define ped_yellow_port PORTA_INDEX
-#define ped_yellow_pin PIN1
-
-#define ped_green_port PORTA_INDEX
-#define ped_green_pin PIN2
+#define PED_RED_PORT 		PORTA_INDEX
+#define PED_RED_PIN 		PIN4
 //****************************************************
 
 
 
 
 //******************Cars Leds********************
-#define car_red_port PORTB_INDEX
-#define car_red_pin PIN0
+#define CAR_GREEN_PORT 		PORTA_INDEX
+#define CAR_GREEN_PIN 		PIN0
 
-#define car_yellow_port PORTB_INDEX
-#define car_yellow_pin PIN1
+#define CAR_YELLOW_PORT 	PORTA_INDEX
+#define CAR_YELLOW_PIN 		PIN1
 
-#define car_green_port PORTB_INDEX
-#define car_green_pin PIN2
+#define CAR_RED_PORT 		PORTA_INDEX
+#define CAR_RED_PIN 		PIN2
 //****************************************************
 
 
