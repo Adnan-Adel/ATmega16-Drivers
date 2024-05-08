@@ -4,6 +4,10 @@
 /* ------------------------------- Includes ------------------------------- */
 #include <stdlib.h>
 
+#define NULL_PTR		0
+#define RET_NOK			1
+#define RET_OK			2
+
 /* ------------------------------- data types declarations ------------------------------- */
 typedef unsigned char std_return_type_t;
 
