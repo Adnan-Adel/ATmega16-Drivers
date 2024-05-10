@@ -9,6 +9,7 @@
 /* ----------------------------------- Includes ----------------------------------- */
 #include "mcal_usart.h"
 
+
 uint8_t ucsrc_val=0x00;		// variable temporarily holds the UCSRC-Reg Value
 
 /* ------------------------ Helper Functions Declarations ------------------------- */
@@ -24,9 +25,20 @@ void USART_Init(const usart_cfg_t* _usart_obj)
 {
 	if(_usart_obj != NULL)
 	{
+		UCSRB = 0; // disable while init
+		UCSRA = 0;
+		UCSRC = 0;
+		UCSRC = (1 << URSEL) | (1 << UCSZ1) | (1 << UCSZ0); // async, 8 bit, 1 stop, no parity
+		UCSRA = 0;
+		UCSRB = (1 << RXEN) | (1 << TXEN); // enable Rx and Tx
+		
 		/* Configure I/O Pins */
 		gpio_pin_set_direction(PORTD_INDEX, PIN0, INPUT);
 		gpio_pin_set_direction(PORTD_INDEX, PIN1, OUTPUT);
+		
+		// The URSEL must be one when writing the UCSRC.
+		/*ucsrc_val |= (1 << URSEL);
+		UCSRC = (1 << URSEL) | ucsrc_val;*/
 		
 		/* Configure Baud-Rate */
 		USART_Set_BaudRate(_usart_obj);
@@ -44,8 +56,7 @@ void USART_Init(const usart_cfg_t* _usart_obj)
 		/* Configure Number of Stop Bits */
 		USART_StopBits_Select(_usart_obj);
 		
-		// The URSEL must be one when writing the UCSRC.
-		UCSRC = (1 << URSEL) | ucsrc_val;
+		
 
 		/* Enable USART */
 		if(_usart_obj->_usart_operation_mode == USART_OP_MODE_TX)
