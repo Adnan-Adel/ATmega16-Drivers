@@ -7,7 +7,7 @@
 /* ------------------------------- Includes ------------------------------- */
 #include "MCAL/INTERRUPT/mcal_ext_interrupt.h"
 #include "MCAL/TIMERS/TIMER0/mcal_timer0.h"
-#include "MCAL/SPI/spi.h"
+#include "MCAL/USART/mcal_usart.h"
 #include "HAL/LED/hal_led.h"
 #include "HAL/SEG/seg.h"
 
@@ -55,10 +55,15 @@ Timer0_cfg_t mytimer={
 	.COV= 2000
 };
 
-Spicfg_t My_SPI={
-	.spi_mode= SPI_MODE_MASTER,
-	.spi_clock_rate= SPI_CLOCKRATE_DIV_16
+usart_cfg_t My_UART={
+	._usart_baudrate= 9600,
+	._usart_data_bits= USART_DATA_BITS_8,
+	._usart_mode= USART_MODE_ASYNCH,
+	._usart_operation_mode= USART_OP_MODE_TX_RX,
+	._usart_parity= USART_PARITY_DISABLED,
+	._usart_stop_bit= USART_STOP_BITS_1
 };
+
 
 
 int main(void)
@@ -67,7 +72,7 @@ int main(void)
 	
 	Interrupr_INTx_Init(EXT_INT0, INTx_SENSE_RISING_EDGE, EXT0_Handler);
 	Timer0_Init(&mytimer);
-	SPI_Init(&My_SPI);
+	USART_Init(&My_UART);
 	
 	/* Initialize External Hardware Devices */
     HAL_Init();
@@ -77,9 +82,12 @@ int main(void)
 		/*  ---------------------------- Car Traffic Light is in Red State ---------------------------- */
 		CarLightState= GREEN; // CAR_LED_GREEN IS ON
 		flag= 0;
-		SPI_Transmit(&My_SPI, 'g');
+		
+		USART_Blocking_SendByte(&My_UART, 'r');
 		led_turn_on(PED_RED_PORT, PED_RED_PIN);
 		led_turn_on(CAR_GREEN_PORT, CAR_GREEN_PIN);
+		led_turn_off(CAR_RED_PORT, CAR_RED_PIN);
+		led_turn_off(CAR_YELLOW_PORT, CAR_YELLOW_PIN);
 		
 		for(counter = 9; counter >= 0; counter--)
 		{
@@ -95,7 +103,8 @@ int main(void)
 		/*  ---------------------------- Car Traffic Light is in Yellow State ---------------------------- */
 		CarLightState= YELLOW; // CAR_LED_YELLOW IS ON
 		flag= 0;
-		SPI_Transmit(&My_SPI, 'y');
+		led_turn_off(CAR_RED_PORT, CAR_RED_PIN);
+		led_turn_off(CAR_GREEN_PORT, CAR_GREEN_PIN);
 		for(counter = 9; counter >= 0; counter--)
 		{
 			seg_write_nnum(&my_seg, counter);
@@ -113,9 +122,11 @@ int main(void)
 		/*  ---------------------------- Car Traffic Light is in Green State ---------------------------- */
 		CarLightState= RED; // CAR_LED_RED IS ON
 		flag= 0;
-		SPI_Transmit(&My_SPI, 'r');
+		USART_Blocking_SendByte(&My_UART, 'g');
 		led_turn_on(PED_GREEN_PORT, PED_GREEN_PIN);
 		led_turn_on(CAR_RED_PORT, CAR_RED_PIN);
+		led_turn_off(CAR_GREEN_PORT, CAR_GREEN_PIN);
+		led_turn_off(CAR_YELLOW_PORT, CAR_YELLOW_PIN);
 		for(counter = 9; counter >= 0; counter--)
 		{
 			seg_write_nnum(&my_seg, counter);
@@ -131,7 +142,8 @@ int main(void)
 		/*  ---------------------------- Car Traffic Light is in Yellow State ---------------------------- */
 		CarLightState= YELLOW; // CAR_LED_YELLOW IS ON
 		flag= 0;
-		SPI_Transmit(&My_SPI, 'y');
+		led_turn_off(CAR_RED_PORT, CAR_RED_PIN);
+		led_turn_off(CAR_GREEN_PORT, CAR_GREEN_PIN);
 		for(counter = 9; counter >= 0; counter--)
 		{
 			seg_write_nnum(&my_seg, counter);
@@ -175,8 +187,9 @@ void EXT0_Handler(void)
 		switch(CarLightState)
 		{
 			case GREEN:		// Button was pressed when Cars Green Led was on
-			SPI_Transmit(&My_SPI, 'g');
 			led_turn_off(CAR_GREEN_PORT, CAR_GREEN_PIN);
+			
+			USART_Blocking_SendByte(&My_UART, 'y');
 			for(counter = 9; counter >= 0; counter--)
 			{
 				seg_write_nnum(&my_seg, counter);
@@ -190,7 +203,10 @@ void EXT0_Handler(void)
 
 			led_turn_off(PED_RED_PORT, PED_RED_PIN);
 			led_turn_on(CAR_RED_PORT, CAR_RED_PIN);
+			
+			USART_Blocking_SendByte(&My_UART, 'g');
 			led_turn_on(PED_GREEN_PORT, PED_GREEN_PIN);
+			
 			for(counter = 9; counter >= 0; counter--)
 			{
 				seg_write_nnum(&my_seg, counter);
@@ -198,7 +214,8 @@ void EXT0_Handler(void)
 				Timer0_WaitBlocking(&mytimer);
 			}
 			led_turn_off(CAR_RED_PORT, CAR_RED_PIN);
-
+			
+			USART_Blocking_SendByte(&My_UART, 'y');
 			for(counter = 9; counter >= 0; counter--)
 			{
 				seg_write_nnum(&my_seg, counter);
@@ -210,11 +227,13 @@ void EXT0_Handler(void)
 			led_turn_off(CAR_YELLOW_PORT, CAR_YELLOW_PIN);
 			led_turn_off(PED_YELLOW_PORT, PED_YELLOW_PIN);
 			led_turn_off(PED_GREEN_PORT, PED_GREEN_PIN);
+			
+			USART_Blocking_SendByte(&My_UART, 'r');
 			led_turn_on(PED_RED_PORT, PED_RED_PIN);
 			break;
 			
 			case YELLOW:	// Button was pressed when car_led_yellow was on
-			SPI_Transmit(&My_SPI, 'y');
+			USART_Blocking_SendByte(&My_UART, 'y');
 			for(counter = 9; counter >= 0; counter--)
 			{
 				seg_write_nnum(&my_seg, counter);
@@ -228,6 +247,8 @@ void EXT0_Handler(void)
 
 			led_turn_off(PED_RED_PORT, PED_RED_PIN);
 			led_turn_on(CAR_RED_PORT, CAR_RED_PIN);
+			
+			USART_Blocking_SendByte(&My_UART, 'g');
 			led_turn_on(PED_GREEN_PORT, PED_GREEN_PIN);
 			
 			for(counter = 9; counter >= 0; counter--)
@@ -237,7 +258,8 @@ void EXT0_Handler(void)
 				Timer0_WaitBlocking(&mytimer);
 			}
 			led_turn_on(CAR_RED_PORT, CAR_RED_PIN);
-
+			
+			USART_Blocking_SendByte(&My_UART, 'y');
 			for(counter = 9; counter >= 0; counter--)
 			{
 				seg_write_nnum(&my_seg, counter);
@@ -246,13 +268,13 @@ void EXT0_Handler(void)
 				led_toggle(PED_YELLOW_PORT, PED_YELLOW_PIN);
 				Timer0_WaitBlocking(&mytimer);
 			}
-			//led_turn_off(CAR_YELLOW_PORT, CAR_YELLOW_PIN);
+			led_turn_off(CAR_YELLOW_PORT, CAR_YELLOW_PIN);
 			led_turn_off(PED_YELLOW_PORT, PED_YELLOW_PIN);
 			led_turn_off(PED_GREEN_PORT, PED_GREEN_PIN);
 			break;
 			
 			case RED:		// Button was pressed when car_led_red was on
-			SPI_Transmit(&My_SPI, 'r');
+			USART_Blocking_SendByte(&My_UART, 'g');
 			led_turn_on(PED_GREEN_PORT, PED_GREEN_PIN);
 			for(counter = 9; counter >= 0; counter--)
 			{
@@ -262,7 +284,8 @@ void EXT0_Handler(void)
 			}
 			led_turn_off(CAR_RED_PORT, CAR_RED_PIN);
 			led_turn_off(PED_RED_PORT, PED_RED_PIN);
-
+			
+			USART_Blocking_SendByte(&My_UART, 'y');
 			for(counter = 9; counter >= 0; counter--)
 			{
 				seg_write_nnum(&my_seg, counter);
@@ -274,6 +297,8 @@ void EXT0_Handler(void)
 			led_turn_off(CAR_YELLOW_PORT, CAR_YELLOW_PIN);
 			led_turn_off(PED_YELLOW_PORT, PED_YELLOW_PIN);
 			led_turn_off(PED_RED_PORT, PED_RED_PIN);
+			
+			USART_Blocking_SendByte(&My_UART, 'g');
 			led_turn_on(PED_GREEN_PORT, PED_GREEN_PIN);
 			break;
 		}
