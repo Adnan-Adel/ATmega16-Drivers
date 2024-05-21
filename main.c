@@ -29,7 +29,7 @@ static uint8_t flag= 0;
 volatile uint8_t btn_state= 0;
 
 seg_t my_seg={
-	.seg_mode= SEG_COM_ANODE,
+	.seg_mode= SEG_COM_CATHODE,
 	.seg_pins[0]._port= PORTC_INDEX,
 	.seg_pins[0]._pin= PIN0,
 	.seg_pins[1]._port= PORTC_INDEX,
@@ -52,7 +52,7 @@ Timer0_cfg_t mytimer={
 	.Timer0_mode= TIMER0_MODE_NORMAL,
 	.Timer0_Preloaded_Value= 6,
 	.Timer0_PreScaler= TIMER0_CLOCK_PRESCALER_1,
-	.COV= 2000
+	.COV= 8000
 };
 
 usart_cfg_t My_UART={
@@ -83,7 +83,6 @@ int main(void)
 		CarLightState= GREEN; // CAR_LED_GREEN IS ON
 		flag= 0;
 		
-		USART_Blocking_SendByte(&My_UART, 'r');
 		led_turn_on(PED_RED_PORT, PED_RED_PIN);
 		led_turn_on(CAR_GREEN_PORT, CAR_GREEN_PIN);
 		led_turn_off(CAR_RED_PORT, CAR_RED_PIN);
@@ -122,7 +121,6 @@ int main(void)
 		/*  ---------------------------- Car Traffic Light is in Green State ---------------------------- */
 		CarLightState= RED; // CAR_LED_RED IS ON
 		flag= 0;
-		USART_Blocking_SendByte(&My_UART, 'g');
 		led_turn_on(PED_GREEN_PORT, PED_GREEN_PIN);
 		led_turn_on(CAR_RED_PORT, CAR_RED_PIN);
 		led_turn_off(CAR_GREEN_PORT, CAR_GREEN_PIN);
@@ -137,7 +135,6 @@ int main(void)
 				break;
 			}
 		}
-		led_turn_off(CAR_RED_PORT, CAR_RED_PIN);
 		
 		/*  ---------------------------- Car Traffic Light is in Yellow State ---------------------------- */
 		CarLightState= YELLOW; // CAR_LED_YELLOW IS ON
@@ -157,6 +154,9 @@ int main(void)
 		}
 		led_turn_off(CAR_YELLOW_PORT, CAR_YELLOW_PIN);
 		led_turn_off(PED_GREEN_PORT, PED_GREEN_PIN);
+		
+		USART_Blocking_SendByte(&My_UART, 'r');
+		led_turn_on(PED_RED_PORT, PED_RED_PIN);
     }
 	
 	return 0;
@@ -228,7 +228,6 @@ void EXT0_Handler(void)
 			led_turn_off(PED_YELLOW_PORT, PED_YELLOW_PIN);
 			led_turn_off(PED_GREEN_PORT, PED_GREEN_PIN);
 			
-			USART_Blocking_SendByte(&My_UART, 'r');
 			led_turn_on(PED_RED_PORT, PED_RED_PIN);
 			break;
 			
@@ -271,6 +270,9 @@ void EXT0_Handler(void)
 			led_turn_off(CAR_YELLOW_PORT, CAR_YELLOW_PIN);
 			led_turn_off(PED_YELLOW_PORT, PED_YELLOW_PIN);
 			led_turn_off(PED_GREEN_PORT, PED_GREEN_PIN);
+			led_turn_off(PED_GREEN_PORT, PED_GREEN_PIN);
+			
+			led_turn_on(PED_RED_PORT, PED_RED_PIN);
 			break;
 			
 			case RED:		// Button was pressed when car_led_red was on
@@ -296,13 +298,13 @@ void EXT0_Handler(void)
 			}
 			led_turn_off(CAR_YELLOW_PORT, CAR_YELLOW_PIN);
 			led_turn_off(PED_YELLOW_PORT, PED_YELLOW_PIN);
-			led_turn_off(PED_RED_PORT, PED_RED_PIN);
+			led_turn_off(PED_GREEN_PORT, PED_GREEN_PIN);
 			
-			USART_Blocking_SendByte(&My_UART, 'g');
-			led_turn_on(PED_GREEN_PORT, PED_GREEN_PIN);
+			led_turn_on(PED_RED_PORT, PED_RED_PIN);
 			break;
 		}
+		btn_state= 0;
+		USART_Blocking_SendByte(&My_UART, 'i');
 	}
-	btn_state= 0;
 	flag= 1;
 }
