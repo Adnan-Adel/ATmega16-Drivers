@@ -155,7 +155,7 @@ int main(void)
 		led_turn_off(CAR_YELLOW_PORT, CAR_YELLOW_PIN);
 		led_turn_off(PED_GREEN_PORT, PED_GREEN_PIN);
 		
-		USART_Blocking_SendByte(&My_UART, 'r');
+
 		led_turn_on(PED_RED_PORT, PED_RED_PIN);
     }
 	
